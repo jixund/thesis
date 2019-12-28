@@ -1,21 +1,66 @@
 import numpy as np
 
 
-def omega_g_constructor(omega_g_basis):
+def down_eta_constructor(bool_omega_g_basis, vertices):
+    down_eta = {}
+    
+    edge_basis = bool_omega_g_basis[vertices:]
+
+    for row in edge_basis:
+        down_eta[tuple(row)] = True
+
+    for row in edge_basis:
+        # The list() here avoids dict change size error
+        for key in list(down_eta):
+            try:
+                down_eta[tuple(row+list(key))]
+            except:
+                down_eta[tuple(row+list(key))] = True
+    # Adding the empty set 
+    down_eta[tuple(np.zeros(len(bool_omega_g_basis[0])))] = True
+
+    # print(down_eta,"\n",len(down_eta))
+
+    down_eta_array = np.array(list(down_eta))
+    return down_eta_array
+
+def up_eta_constructor(bool_omega_g_basis, vertices):
+
+    return
+
+def sus_omega_g_constructor(bool_omega_g_basis, vertices):
+    
+    return
+
+def omega_g_constructor(omega_g_basis, vertices):
     # cache = {}
     omega_g = {}
-    bool_omega_basis = omega_g_basis.astype(bool)
+    bool_omega_g_basis = omega_g_basis.astype(bool)
+    
+    # Every omega_g is composed of the following 3 parts:
+    #   1.) down_eta
+    #   2.) up_eta
+    #   3.) sus(omega_g)
+    #   We construct each one individually and concat at the end.
 
-    for i, row in enumerate(bool_omega_basis):
-        temp = bool_omega_basis[i]
+    down_eta = down_eta_constructor(bool_omega_g_basis, vertices)
+    up_eta = up_eta_constructor(bool_omega_g_basis, vertices)
+    sus_omega_g = sus_omega_g_constructor(bool_omega_g_basis, vertices)
+
+    for i, row in enumerate(bool_omega_g_basis):
+        temp = bool_omega_g_basis[i]
         for j in range(i+1, len(omega_g_basis)):
-            omega_g[tuple(temp + bool_omega_basis[j])] = True
-            print(temp + bool_omega_basis[j])
+            omega_g[tuple(temp + bool_omega_g_basis[j])] = True
+            print(temp + bool_omega_g_basis[j])
     # for basis_element in omega_g_basis:
     #    cache[basis_element] = True
     #    omega_g[basis_element] = True
+    #
+    # Possible approach:
+    #   1.) Construct down_eta
+    #   2.) Construct up_eta
+    #   3.) Construct sus(omega_g)
 
-    print(omega_g)
     return omega_g
 
 
@@ -50,7 +95,7 @@ def main():
     omega_g_basis = vertex_basis(graph, omega_g_basis, vertices)
     omega_g_basis = edge_basis(omega_g_basis, vertices)
 
-    omega_g = omega_g_constructor(omega_g_basis)
+    omega_g = omega_g_constructor(omega_g_basis, vertices)
 
     print("Graph:\n", graph)
     print("Edge num:", edges)
