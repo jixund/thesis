@@ -1,6 +1,24 @@
 import numpy as np
 
 
+def omega_g_constructor(omega_g_basis):
+    # cache = {}
+    omega_g = {}
+    bool_omega_basis = omega_g_basis.astype(bool)
+
+    for i, row in enumerate(bool_omega_basis):
+        temp = bool_omega_basis[i]
+        for j in range(i+1, len(omega_g_basis)):
+            omega_g[tuple(temp + bool_omega_basis[j])] = True
+            print(temp + bool_omega_basis[j])
+    # for basis_element in omega_g_basis:
+    #    cache[basis_element] = True
+    #    omega_g[basis_element] = True
+
+    print(omega_g)
+    return omega_g
+
+
 def edge_basis(omega_g_basis, vertices):
     """
     The rows in omega_g_basis whose indeces are greater than the number of vertices are the edge basis rows.
@@ -32,10 +50,13 @@ def main():
     omega_g_basis = vertex_basis(graph, omega_g_basis, vertices)
     omega_g_basis = edge_basis(omega_g_basis, vertices)
 
+    omega_g = omega_g_constructor(omega_g_basis)
+
     print("Graph:\n", graph)
     print("Edge num:", edges)
     print("Vert num:", len(graph))
     print("Omega_g Basis (vertices + edges):\n", omega_g_basis)
+    print("Omega_g:\n", omega_g)
     
     return
 
