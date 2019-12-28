@@ -16,17 +16,40 @@ def down_eta_constructor(bool_omega_g_basis, vertices):
                 down_eta[tuple(row+list(key))]
             except:
                 down_eta[tuple(row+list(key))] = True
+    
     # Adding the empty set 
     down_eta[tuple(np.zeros(len(bool_omega_g_basis[0])))] = True
 
-    # print(down_eta,"\n",len(down_eta))
-
     down_eta_array = np.array(list(down_eta))
+    
     return down_eta_array
 
 def up_eta_constructor(bool_omega_g_basis, vertices):
+    up_eta = {}
+    
+    # Constructing the top of down_eta to be joined with the vertex basis
+    down_eta_top = np.zeros(len(bool_omega_g_basis[0]))
+    np.put(down_eta_top, range(vertices,len(down_eta_top)), 1) 
+    down_eta_top = down_eta_top.astype(bool)
 
-    return
+    vertex_basis = bool_omega_g_basis[:vertices]
+
+    for row in vertex_basis:
+        up_eta[tuple(row+down_eta_top)] = True
+
+    for row in vertex_basis:
+        # The list() here avoids dict cahnge size error
+        for key in list(up_eta):
+            try:
+                up_eta[tuple(row+list(key))]
+            except:
+                up_eta[tuple(row+list(key))] = True
+    print(up_eta, "\n", len(up_eta))
+
+    up_eta_array = np.array(list(up_eta))
+    print(up_eta_array)
+
+    return up_eta_array
 
 def sus_omega_g_constructor(bool_omega_g_basis, vertices):
     
@@ -52,10 +75,7 @@ def omega_g_constructor(omega_g_basis, vertices):
         for j in range(i+1, len(omega_g_basis)):
             omega_g[tuple(temp + bool_omega_g_basis[j])] = True
             print(temp + bool_omega_g_basis[j])
-    # for basis_element in omega_g_basis:
-    #    cache[basis_element] = True
-    #    omega_g[basis_element] = True
-    #
+    
     # Possible approach:
     #   1.) Construct down_eta
     #   2.) Construct up_eta
